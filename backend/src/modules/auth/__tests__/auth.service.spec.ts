@@ -10,16 +10,15 @@ jest.mock('bcrypt', () => ({
 }));
 import * as bcrypt from 'bcrypt';
 
-const makeUser = (overrides: Partial<User> = {}): User =>
-  ({
-    id: 'abc-123',
-    email: 'test@test.com',
-    password: 'hashed',
-    role: UserRole.USER,
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    ...overrides,
-  }) as User;
+const makeUser = (overrides: Partial<User> = {}): User => ({
+  id: 'abc-123',
+  email: 'test@test.com',
+  password: 'hashed',
+  role: UserRole.USER,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  ...overrides,
+});
 
 describe('AuthService', () => {
   let authService: AuthService;
@@ -47,15 +46,18 @@ describe('AuthService', () => {
       usersService.findByEmail.mockResolvedValue(user);
       (bcrypt.compare as jest.Mock).mockResolvedValue(true);
 
-      const result = await authService.validateUser('test@test.com', 'plaintext');
+      const result = await authService.validateUser(
+        'test@test.com',
+        'plaintext',
+      );
       expect(result).toBe(user);
     });
 
     it('throws UnauthorizedException when user not found', async () => {
       usersService.findByEmail.mockResolvedValue(null);
-      await expect(authService.validateUser('bad@test.com', 'x')).rejects.toThrow(
-        UnauthorizedException,
-      );
+      await expect(
+        authService.validateUser('bad@test.com', 'x'),
+      ).rejects.toThrow(UnauthorizedException);
     });
 
     it('throws UnauthorizedException when password is wrong', async () => {
@@ -63,19 +65,20 @@ describe('AuthService', () => {
       usersService.findByEmail.mockResolvedValue(user);
       (bcrypt.compare as jest.Mock).mockResolvedValue(false);
 
-      await expect(authService.validateUser('test@test.com', 'wrong')).rejects.toThrow(
-        UnauthorizedException,
-      );
+      await expect(
+        authService.validateUser('test@test.com', 'wrong'),
+      ).rejects.toThrow(UnauthorizedException);
     });
   });
 
   describe('login', () => {
-    it('returns accessToken and refreshToken', async () => {
+    it('returns accessToken and refreshToken', () => {
       jwtService.sign.mockReturnValue('signed-token');
       const user = makeUser();
-      const result = await authService.login(user);
+      const result = authService.login(user);
       expect(result.accessToken).toBe('signed-token');
       expect(result.refreshToken).toBe('signed-token');
+      // eslint-disable-next-line @typescript-eslint/unbound-method
       expect(jwtService.sign).toHaveBeenCalledTimes(2);
     });
   });
@@ -83,7 +86,11 @@ describe('AuthService', () => {
   describe('refresh', () => {
     it('returns new token pair when refresh token is valid', async () => {
       const user = makeUser();
-      jwtService.verify.mockReturnValue({ sub: user.id, email: user.email, role: user.role });
+      jwtService.verify.mockReturnValue({
+        sub: user.id,
+        email: user.email,
+        role: user.role,
+      });
       usersService.findById.mockResolvedValue(user);
       jwtService.sign.mockReturnValue('new-token');
 
@@ -95,7 +102,9 @@ describe('AuthService', () => {
       jwtService.verify.mockImplementation(() => {
         throw new Error('expired');
       });
-      await expect(authService.refresh('bad-token')).rejects.toThrow(UnauthorizedException);
+      await expect(authService.refresh('bad-token')).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
   });
 });

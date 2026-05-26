@@ -32,7 +32,7 @@ export class AuthService {
     return user;
   }
 
-  async login(user: User): Promise<TokenPair> {
+  login(user: User): TokenPair {
     return this.generateTokens(user);
   }
 
@@ -50,7 +50,11 @@ export class AuthService {
   }
 
   private generateTokens(user: User): TokenPair {
-    const payload: JwtPayload = { sub: user.id, email: user.email, role: user.role };
+    const payload: JwtPayload = {
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+    };
 
     const accessToken = this.jwtService.sign(payload, { expiresIn: '15m' });
     const refreshToken = this.jwtService.sign(payload, {

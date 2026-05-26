@@ -1,5 +1,9 @@
+import type { Repository } from 'typeorm';
 import { EnergyService } from '../energy.service';
 import type { EnergyReading as EnergyReadingContract } from '../../../domain/contracts';
+import type { EnergyReading } from '../entities/energy-reading.entity';
+import type { EnergyHourly } from '../entities/energy-hourly.entity';
+import type { EnergyDaily } from '../entities/energy-daily.entity';
 
 const reading: EnergyReadingContract = {
   deviceId: 'dev-1',
@@ -27,8 +31,14 @@ const makeQbMock = () => {
 describe('EnergyService.upsertReading', () => {
   it('calls orIgnore so duplicate writes do not throw', async () => {
     const qb = makeQbMock();
-    const readingRepo = { createQueryBuilder: jest.fn().mockReturnValue(qb) } as any;
-    const service = new EnergyService(readingRepo, {} as any, {} as any);
+    const readingRepo = {
+      createQueryBuilder: jest.fn().mockReturnValue(qb),
+    } as unknown as Repository<EnergyReading>;
+    const service = new EnergyService(
+      readingRepo,
+      {} as unknown as Repository<EnergyHourly>,
+      {} as unknown as Repository<EnergyDaily>,
+    );
 
     await service.upsertReading(reading);
 
@@ -38,8 +48,14 @@ describe('EnergyService.upsertReading', () => {
 
   it('is idempotent — calling twice does not throw', async () => {
     const qb = makeQbMock();
-    const readingRepo = { createQueryBuilder: jest.fn().mockReturnValue(qb) } as any;
-    const service = new EnergyService(readingRepo, {} as any, {} as any);
+    const readingRepo = {
+      createQueryBuilder: jest.fn().mockReturnValue(qb),
+    } as unknown as Repository<EnergyReading>;
+    const service = new EnergyService(
+      readingRepo,
+      {} as unknown as Repository<EnergyHourly>,
+      {} as unknown as Repository<EnergyDaily>,
+    );
 
     await expect(service.upsertReading(reading)).resolves.toBeUndefined();
     await expect(service.upsertReading(reading)).resolves.toBeUndefined();

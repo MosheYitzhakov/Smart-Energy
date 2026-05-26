@@ -1,5 +1,5 @@
 import type { AIProvider } from '../ai-provider.interface';
-import type { AIInput, AIOutput, ChatMessage } from '../../../domain/contracts';
+import type { AIOutput } from '../../../domain/contracts';
 
 const EXPLAIN_FIXTURE: AIOutput = {
   explanation:
@@ -21,11 +21,16 @@ const CHAT_RESPONSES = [
 ];
 
 export class MockAIProvider implements AIProvider {
-  async explain(_input: AIInput): Promise<AIOutput> {
-    return { ...EXPLAIN_FIXTURE, generatedAt: new Date().toISOString() };
+  explain(): Promise<AIOutput> {
+    return Promise.resolve({
+      ...EXPLAIN_FIXTURE,
+      generatedAt: new Date().toISOString(),
+    });
   }
 
-  async chat(_history: ChatMessage[], _question: string): Promise<string> {
-    return CHAT_RESPONSES[Math.floor(Math.random() * CHAT_RESPONSES.length)];
+  chat(): Promise<string> {
+    const response =
+      CHAT_RESPONSES[Math.floor(Math.random() * CHAT_RESPONSES.length)] ?? '';
+    return Promise.resolve(response);
   }
 }

@@ -46,7 +46,7 @@ export class EnergyGateway
     // Subscribe needs a dedicated connection — ioredis cannot do both on one connection.
     this.subscriber = this.redis.duplicate();
 
-    this.subscriber.subscribe('energy.live', 'energy.alerts', (err) => {
+    void this.subscriber.subscribe('energy.live', 'energy.alerts', (err) => {
       if (err) console.error('[Gateway] Redis subscribe error:', err.message);
     });
 

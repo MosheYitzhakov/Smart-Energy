@@ -10,11 +10,25 @@ import * as winston from 'winston';
           format: winston.format.combine(
             winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
             winston.format.colorize(),
-            winston.format.printf(({ timestamp, level, message, context, ...meta }) => {
-              const ctx = context ? `[${context}]` : '';
-              const extras = Object.keys(meta).length ? ` ${JSON.stringify(meta)}` : '';
-              return `${timestamp} ${level} ${ctx} ${message}${extras}`;
-            }),
+            winston.format.printf(
+              ({
+                timestamp,
+                level,
+                message,
+                context,
+                ...meta
+              }: winston.Logform.TransformableInfo & {
+                timestamp?: string;
+                context?: string;
+              }) => {
+                const ctx = context ? `[${context}]` : '';
+                const extras = Object.keys(meta).length
+                  ? ` ${JSON.stringify(meta)}`
+                  : '';
+                // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+                return `${timestamp ?? ''} ${level} ${ctx} ${message}${extras}`;
+              },
+            ),
           ),
         }),
       ],
