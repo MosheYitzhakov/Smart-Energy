@@ -1,0 +1,159 @@
+.toolbar-nav {
+  display: flex;
+  align-items: center;
+  margin-inline-start: auto;
+
+  @media (max-width: 600px) {
+    flex: 1;
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar { display: none; }
+
+    /* Prevent buttons inside from shrinking */
+    button { flex-shrink: 0; }
+  }
+}
+
+/* ── Grid ── */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  padding: 16px;
+  min-width: 0;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.dashboard-grid > * {
+  min-width: 0;
+}
+
+.metric-card {
+  min-height: 240px;
+}
+
+.chart-card {
+  grid-column: 1 / -1;
+}
+
+/* ── Cost card ── */
+.cost-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 0;
+}
+
+.cost-value {
+  font-size: 2.5rem;
+  font-weight: 700;
+  background: linear-gradient(90deg, #00d2ff, #00e676);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.cost-label {
+  color: var(--cost-label-color);
+  font-size: 0.875rem;
+  margin-top: 4px;
+}
+
+/* ── Alerts ── */
+.no-alerts {
+  color: var(--no-alerts-color);
+  font-size: 0.9rem;
+}
+
+.alert-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 190px;
+  overflow-y: auto;
+  padding-inline-end: 4px;
+
+  /* Themed scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: var(--card-border) transparent;
+
+  &::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--card-border);
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+  }
+}
+
+.alert-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  font-size: 0.875rem;
+  box-sizing: border-box;
+
+  &.warning {
+    background: var(--alert-warning-bg);
+    color: var(--alert-warning-text);
+    .alert-icon { color: var(--alert-warning-text); }
+  }
+
+  &.critical {
+    background: var(--alert-critical-bg);
+    color: var(--alert-critical-text);
+    .alert-icon { color: var(--alert-critical-text); }
+  }
+}
+
+.alert-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    padding: 8px;
+    gap: 10px;
+  }
+
+  .chart-card {
+    grid-column: 1;
+  }
+
+  .cost-value {
+    font-size: 2rem;
+  }
+
+  /* Compact metric cards on mobile */
+  .metric-card {
+    min-height: unset;
+  }
+}

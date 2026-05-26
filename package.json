@@ -1,0 +1,14 @@
+{
+  "name": "smart-energy",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently --names \"API,WORKER,UI\" --prefix-colors \"cyan,yellow,green\" \"npm run dev:api\" \"npm run dev:worker\" \"npm run dev:ui\"",
+    "dev:api":    "npm run start:dev   --prefix backend",
+    "dev:worker": "npm run start:worker --prefix backend",
+    "dev:ui":     "npm start           --prefix frontend",
+    "infra":      "docker-compose up postgres redis -d"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

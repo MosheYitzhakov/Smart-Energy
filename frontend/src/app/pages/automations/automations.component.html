@@ -1,0 +1,156 @@
+<mat-toolbar color="primary">
+  <button mat-icon-button routerLink="/dashboard" [title]="i18n.t().nav.back">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span>{{ i18n.t().automations.title }}</span>
+  <span class="spacer"></span>
+  <button mat-button class="lang-toggle-btn" (click)="i18n.toggle()">
+    {{ i18n.lang() === 'he' ? 'EN' : 'עב' }}
+  </button>
+</mat-toolbar>
+
+<div class="automations-content">
+
+  <div class="header-row">
+    <button mat-raised-button class="add-btn" (click)="showForm.set(true)">
+      <mat-icon>add</mat-icon>
+      {{ i18n.t().automations.addBtn }}
+    </button>
+  </div>
+
+  @if (loading()) {
+    <p class="loading-msg">...</p>
+  } @else if (rules().length === 0) {
+    <p class="empty-msg">{{ i18n.t().automations.empty }}</p>
+  } @else {
+    <mat-list class="rules-list">
+      @for (rule of rules(); track rule.id) {
+        <mat-list-item class="rule-item">
+          <span matListItemTitle>{{ rule.name }}</span>
+          <span matListItemLine class="rule-meta">
+            @if (rule.condition.type === 'watt_threshold') {
+              {{ deviceName(rule.condition.deviceId) }} —
+              {{ rule.condition.operator === 'gt' ? i18n.t().automations.gt : i18n.t().automations.lt }}
+              {{ rule.condition.value }}W
+            } @else {
+              {{ i18n.t().automations.conditionTime }} — {{ rule.condition.startHour }}:00–{{ rule.condition.endHour }}:00
+            }
+            &nbsp;→&nbsp;
+            @if (rule.action.type === 'notify') {
+              {{ i18n.t().automations.actionNotify }}: {{ rule.action.message }}
+            } @else {
+              {{ i18n.t().automations.actionLog }} [{{ rule.action.level }}]
+            }
+          </span>
+          <button matListItemMeta mat-icon-button color="warn" (click)="deleteRule(rule.id)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-list-item>
+      }
+    </mat-list>
+  }
+
+  @if (showForm()) {
+    <mat-card class="form-card">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t().automations.addBtn }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="save()" class="rule-form">
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ i18n.t().automations.name }}</mat-label>
+            <input matInput formControlName="name" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ i18n.t().automations.condition }}</mat-label>
+            <mat-select formControlName="conditionType">
+              <mat-option value="watt_threshold">{{ i18n.t().automations.conditionWatt }}</mat-option>
+              <mat-option value="time_window">{{ i18n.t().automations.conditionTime }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          @if (form.value.conditionType === 'watt_threshold') {
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>{{ i18n.t().automations.device }}</mat-label>
+              <mat-select formControlName="deviceId">
+                <mat-option value="">{{ i18n.t().automations.allDevices }}</mat-option>
+                @for (device of devices(); track device.id) {
+                  <mat-option [value]="device.id">
+                    {{ device.name }} ({{ device.powerWatts }}W)
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>{{ i18n.t().automations.operator }}</mat-label>
+              <mat-select formControlName="operator">
+                <mat-option value="gt">{{ i18n.t().automations.gt }}</mat-option>
+                <mat-option value="lt">{{ i18n.t().automations.lt }}</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>{{ i18n.t().automations.threshold }}</mat-label>
+              <input matInput type="number" min="0" formControlName="threshold" />
+              <span matSuffix>W</span>
+            </mat-form-field>
+
+          } @else {
+
+            <div class="row">
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>{{ i18n.t().automations.startHour }}</mat-label>
+                <input matInput type="number" min="0" max="23" formControlName="startHour" />
+              </mat-form-field>
+              <mat-form-field appearance="outline" class="half-width">
+                <mat-label>{{ i18n.t().automations.endHour }}</mat-label>
+                <input matInput type="number" min="0" max="23" formControlName="endHour" />
+              </mat-form-field>
+            </div>
+
+          }
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ i18n.t().automations.action }}</mat-label>
+            <mat-select formControlName="actionType">
+              <mat-option value="notify">{{ i18n.t().automations.actionNotify }}</mat-option>
+              <mat-option value="log">{{ i18n.t().automations.actionLog }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          @if (form.value.actionType === 'notify') {
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>{{ i18n.t().automations.message }}</mat-label>
+              <input matInput formControlName="message" />
+            </mat-form-field>
+          } @else {
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>{{ i18n.t().automations.logLevel }}</mat-label>
+              <mat-select formControlName="logLevel">
+                <mat-option value="info">info</mat-option>
+                <mat-option value="warn">warn</mat-option>
+                <mat-option value="error">error</mat-option>
+              </mat-select>
+            </mat-form-field>
+          }
+
+          <div class="form-actions">
+            <button mat-button type="button" (click)="showForm.set(false)">
+              {{ i18n.t().automations.cancel }}
+            </button>
+            <button mat-raised-button type="submit" [disabled]="saving() || form.invalid" class="save-btn">
+              <mat-icon>save</mat-icon>
+              {{ i18n.t().automations.save }}
+            </button>
+          </div>
+
+        </form>
+      </mat-card-content>
+    </mat-card>
+  }
+
+</div>

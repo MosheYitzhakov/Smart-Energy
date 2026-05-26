@@ -1,0 +1,53 @@
+<mat-toolbar color="primary">
+  <button mat-icon-button routerLink="/dashboard" [title]="i18n.t().nav.back">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span class="toolbar-title">{{ i18n.t().settings.title }}</span>
+  <span class="spacer"></span>
+  <button mat-button class="theme-toggle-btn" (click)="theme.toggle()">
+    <mat-icon>{{ theme.theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+  </button>
+  <button mat-button class="lang-toggle-btn" (click)="i18n.toggle()">
+    {{ i18n.lang() === 'he' ? 'EN' : 'עב' }}
+  </button>
+</mat-toolbar>
+
+<div class="settings-content">
+  <mat-card class="settings-card">
+    <mat-card-header>
+      <mat-card-title>{{ i18n.t().settings.tariffTitle }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="form" (ngSubmit)="save()" class="tariff-form">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ i18n.t().settings.peakRate }} (₪/kWh)</mat-label>
+          <input matInput type="number" step="0.01" formControlName="peakRate" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>{{ i18n.t().settings.offPeakRate }} (₪/kWh)</mat-label>
+          <input matInput type="number" step="0.01" formControlName="offPeakRate" />
+        </mat-form-field>
+
+        <div class="row">
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>{{ i18n.t().settings.peakStart }}</mat-label>
+            <input matInput type="number" min="0" max="23" formControlName="peakStart" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="half-width">
+            <mat-label>{{ i18n.t().settings.peakEnd }}</mat-label>
+            <input matInput type="number" min="0" max="23" formControlName="peakEnd" />
+          </mat-form-field>
+        </div>
+
+        <div class="form-actions">
+          <button mat-raised-button type="submit" [disabled]="saving() || form.invalid" class="save-btn">
+            <mat-icon>save</mat-icon>
+            {{ i18n.t().settings.save }}
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

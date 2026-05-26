@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+.env.dev
+.env.staging
+.env.prod
+*.log
+coverage/
+.DS_Store
+*.md
+.claude/
+.vscode/

@@ -1,0 +1,178 @@
+@use '@angular/material' as mat;
+
+html {
+  @include mat.theme((
+    color: (
+      primary: mat.$azure-palette,
+      theme-type: light,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}
+
+/* ── CSS custom properties — dark mode (default) ── */
+:root {
+  --bg-body: linear-gradient(135deg, #071a18 0%, #0d2b26 35%, #0b3022 65%, #0f3d24 100%);
+  --toolbar-bg: rgba(10, 15, 30, 0.6);
+  --toolbar-color: #fff;
+  --card-bg: rgba(255, 255, 255, 0.06);
+  --card-border: rgba(255, 255, 255, 0.1);
+  --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --text-primary: #fff;
+  --text-secondary: rgba(255, 255, 255, 0.6);
+  --text-muted: rgba(255, 255, 255, 0.4);
+  --label-color: rgba(255, 255, 255, 0.65);
+  --grid-color: rgba(255, 255, 255, 0.08);
+  --input-bg: rgba(255, 255, 255, 0.05);
+  --input-border: rgba(255, 255, 255, 0.25);
+  --input-text: #fff;
+  --input-label: rgba(255, 255, 255, 0.6);
+  --alert-warning-bg: rgba(255, 152, 0, 0.18);
+  --alert-warning-text: #ffb74d;
+  --alert-critical-bg: rgba(244, 67, 54, 0.18);
+  --alert-critical-text: #ef9a9a;
+  --empty-color: rgba(255, 255, 255, 0.45);
+  --stale-bg: rgba(255, 152, 0, 0.85);
+  --chip-bg: rgba(0, 210, 255, 0.15);
+  --chip-text: #00d2ff;
+  --cost-label-color: rgba(255, 255, 255, 0.55);
+  --no-alerts-color: #00e676;
+  --delete-btn-color: rgba(239, 154, 154, 0.8);
+}
+
+/* ── CSS custom properties — light mode ── */
+html.light {
+  --bg-body: #f0f4f8;
+  --toolbar-bg: rgba(255, 255, 255, 0.92);
+  --toolbar-color: #1a1a2e;
+  --card-bg: #ffffff;
+  --card-border: rgba(0, 0, 0, 0.08);
+  --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --text-primary: #1a1a2e;
+  --text-secondary: rgba(0, 0, 0, 0.6);
+  --text-muted: rgba(0, 0, 0, 0.38);
+  --label-color: rgba(0, 0, 0, 0.6);
+  --grid-color: rgba(0, 0, 0, 0.07);
+  --input-bg: rgba(0, 0, 0, 0.03);
+  --input-border: rgba(0, 0, 0, 0.22);
+  --input-text: #1a1a2e;
+  --input-label: rgba(0, 0, 0, 0.55);
+  --alert-warning-bg: rgba(255, 152, 0, 0.12);
+  --alert-warning-text: #e65100;
+  --alert-critical-bg: rgba(244, 67, 54, 0.10);
+  --alert-critical-text: #c62828;
+  --empty-color: rgba(0, 0, 0, 0.38);
+  --stale-bg: #f57c00;
+  --chip-bg: rgba(0, 137, 123, 0.12);
+  --chip-text: #00695c;
+  --cost-label-color: rgba(0, 0, 0, 0.5);
+  --no-alerts-color: #2e7d32;
+  --delete-btn-color: #c62828;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--bg-body);
+  background-attachment: fixed;
+  min-height: 100vh;
+  color: var(--text-primary);
+  transition: background 0.3s ease, color 0.2s ease;
+  overflow-x: hidden;
+}
+
+/* ── Toolbar ── */
+mat-toolbar.mat-toolbar {
+  background: var(--toolbar-bg) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--card-border);
+  color: var(--toolbar-color) !important;
+  overflow: hidden;
+
+  button[mat-icon-button],
+  button[mat-button] {
+    color: var(--toolbar-color) !important;
+    flex-shrink: 0;
+  }
+
+  .toolbar-title {
+    background: linear-gradient(90deg, #00d2ff, #00e676);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+}
+
+/* ── Glass / white cards ── */
+mat-card.mat-mdc-card {
+  background: var(--card-bg) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid var(--card-border) !important;
+  box-shadow: var(--card-shadow) !important;
+  color: var(--text-primary) !important;
+  border-radius: 16px !important;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+
+  mat-card-title,
+  .mat-mdc-card-title {
+    color: var(--text-primary) !important;
+  }
+
+  mat-card-subtitle,
+  .mat-mdc-card-subtitle {
+    color: var(--text-secondary) !important;
+  }
+}
+
+/* ── Toolbar pill buttons ── */
+.lang-toggle-btn,
+.theme-toggle-btn {
+  min-width: unset !important;
+  padding: 0 10px !important;
+  height: 28px !important;
+  line-height: 28px !important;
+  font-size: 0.75rem !important;
+  font-weight: 700 !important;
+  border: 1px solid var(--card-border) !important;
+  border-radius: 14px !important;
+  color: var(--toolbar-color) !important;
+  -webkit-text-fill-color: var(--toolbar-color) !important;
+  background: transparent !important;
+  margin-inline-start: 4px;
+}
+
+/* ── Stale banner ── */
+.stale-banner {
+  background: var(--stale-bg);
+  color: #fff;
+  text-align: center;
+  padding: 8px;
+  font-size: 0.875rem;
+}
+
+/* ── Form fields light-mode fix (global) ── */
+html.light {
+  .mdc-text-field--outlined:not(.mdc-text-field--disabled) {
+    .mdc-notched-outline__leading,
+    .mdc-notched-outline__notch,
+    .mdc-notched-outline__trailing {
+      border-color: var(--input-border) !important;
+    }
+  }
+
+  .mat-mdc-input-element  { color: var(--input-text)  !important; }
+  .mat-mdc-floating-label { color: var(--input-label) !important; }
+  .mat-mdc-select-value   { color: var(--input-text)  !important; }
+  .mat-mdc-text-field-wrapper { background: var(--input-bg) !important; }
+}

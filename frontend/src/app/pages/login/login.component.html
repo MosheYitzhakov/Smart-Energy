@@ -1,0 +1,74 @@
+<div class="login-page">
+  <div class="login-card">
+    <div class="brand">
+      <div class="brand-icon">⚡</div>
+      <span class="brand-name">SmartEnergy</span>
+      <div class="brand-actions">
+        <button class="icon-btn" (click)="theme.toggle()" type="button" [title]="theme.theme() === 'dark' ? 'Light mode' : 'Dark mode'">
+          <mat-icon>{{ theme.theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+        </button>
+        <button class="lang-btn" (click)="i18n.toggle()" type="button">
+          {{ i18n.lang() === 'he' ? 'EN' : 'עב' }}
+        </button>
+      </div>
+    </div>
+    <p class="subtitle">{{ i18n.t().login.subtitle }}</p>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+      <mat-form-field appearance="outline">
+        <mat-label>{{ i18n.t().login.email }}</mat-label>
+        <input
+          matInput
+          type="email"
+          formControlName="email"
+          autocomplete="email"
+          data-testid="email-input"
+        />
+        @if (form.get('email')?.touched && form.get('email')?.hasError('required')) {
+          <mat-error>{{ i18n.t().login.emailRequired }}</mat-error>
+        } @else if (form.get('email')?.touched && form.get('email')?.hasError('email')) {
+          <mat-error>{{ i18n.t().login.emailInvalid }}</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>{{ i18n.t().login.password }}</mat-label>
+        <input
+          matInput
+          [type]="showPassword() ? 'text' : 'password'"
+          formControlName="password"
+          autocomplete="current-password"
+          data-testid="password-input"
+        />
+        <button mat-icon-button matSuffix type="button"
+          (click)="showPassword.update(v => !v)"
+          [attr.aria-label]="showPassword() ? 'Hide password' : 'Show password'">
+          <mat-icon>{{ showPassword() ? 'visibility_off' : 'visibility' }}</mat-icon>
+        </button>
+        @if (form.get('password')?.touched && form.get('password')?.hasError('required')) {
+          <mat-error>{{ i18n.t().login.passwordRequired }}</mat-error>
+        }
+      </mat-form-field>
+
+      @if (error()) {
+        <p class="error-message" data-testid="login-error">{{ error() }}</p>
+      }
+
+      <button
+        mat-flat-button
+        type="submit"
+        [disabled]="loading()"
+        class="submit-btn"
+        data-testid="login-submit"
+      >
+        @if (loading()) {
+          <mat-spinner diameter="20" />
+        } @else {
+          {{ i18n.t().login.submit }}
+        }
+      </button>
+    </form>
+
+    <p class="footer-text">{{ i18n.t().login.footer }}</p>
+  </div>
+</div>

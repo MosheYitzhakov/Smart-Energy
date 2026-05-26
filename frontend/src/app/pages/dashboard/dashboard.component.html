@@ -1,0 +1,116 @@
+<mat-toolbar color="primary">
+  <span class="toolbar-title">SmartEnergy</span>
+  <nav class="toolbar-nav">
+    <button mat-icon-button routerLink="/devices" [title]="i18n.t().nav.devices">
+      <mat-icon>devices</mat-icon>
+    </button>
+    <button mat-icon-button routerLink="/ai" [title]="i18n.t().ai.title">
+      <mat-icon>smart_toy</mat-icon>
+    </button>
+    <button mat-icon-button routerLink="/automations" [title]="i18n.t().nav.automations">
+      <mat-icon>auto_awesome</mat-icon>
+    </button>
+    <button mat-icon-button routerLink="/settings" [title]="i18n.t().nav.settings">
+      <mat-icon>settings</mat-icon>
+    </button>
+    <button mat-button class="theme-toggle-btn" (click)="theme.toggle()">
+      <mat-icon>{{ theme.theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+    </button>
+    <button mat-button class="lang-toggle-btn" (click)="i18n.toggle()">
+      {{ i18n.lang() === 'he' ? 'EN' : 'עב' }}
+    </button>
+    <button mat-icon-button (click)="logout()" [title]="i18n.t().nav.logout">
+      <mat-icon>logout</mat-icon>
+    </button>
+  </nav>
+</mat-toolbar>
+
+@if (store.isStale()) {
+  <div class="stale-banner" data-testid="stale-banner">
+    {{ i18n.t().dashboard.reconnecting }}
+  </div>
+}
+
+<div class="dashboard-grid">
+  <!-- Gauge -->
+  <mat-card class="metric-card">
+    <mat-card-header>
+      <mat-card-title>{{ i18n.t().dashboard.currentLoad }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <apx-chart
+        [series]="gaugeSeries()"
+        [chart]="gaugeOptions().chart"
+        [theme]="gaugeOptions().theme"
+        [fill]="gaugeOptions().fill"
+        [plotOptions]="gaugeOptions().plotOptions"
+        [labels]="gaugeOptions().labels"
+        data-testid="current-watts"
+      />
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Daily cost -->
+  <mat-card class="metric-card">
+    <mat-card-header>
+      <mat-card-title>{{ i18n.t().dashboard.dailyCost }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="cost-display" data-testid="daily-cost">
+        <span class="cost-value">₪{{ store.dailyCost() | number: '1.4-4' }}</span>
+        <span class="cost-label">{{ i18n.t().dashboard.today }}</span>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Alerts — full card, no scroll -->
+  <mat-card class="metric-card">
+    <mat-card-header>
+      <mat-card-title>
+        {{ i18n.t().dashboard.alerts }}
+        @if (store.alerts().length > 0) {
+          <span [matBadge]="store.alerts().length" matBadgeColor="warn" matBadgeSize="small"></span>
+        }
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      @if (store.alerts().length === 0) {
+        <p class="no-alerts">{{ i18n.t().dashboard.noAlerts }}</p>
+      } @else {
+        <ul class="alert-list">
+          @for (alert of store.alerts(); track alert.timestamp) {
+            <li class="alert-item" [class]="alert.severity">
+              <mat-icon class="alert-icon">{{ alert.severity === 'critical' ? 'error' : 'warning' }}</mat-icon>
+              <span>
+                {{ alert.severity === 'critical' ? i18n.t().dashboard.critical : i18n.t().dashboard.warning }}:
+                {{ alert.watts.toFixed(0) }}W
+              </span>
+            </li>
+          }
+        </ul>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Live chart — full width -->
+  <mat-card class="chart-card">
+    <mat-card-header>
+      <mat-card-title>{{ i18n.t().dashboard.liveChart }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content data-testid="energy-chart">
+      <apx-chart
+        #liveChart
+        [series]="initialSeries"
+        [chart]="lineChartOptions().chart"
+        [theme]="lineChartOptions().theme"
+        [stroke]="lineChartOptions().stroke"
+        [fill]="lineChartOptions().fill"
+        [xaxis]="lineChartOptions().xaxis"
+        [yaxis]="lineChartOptions().yaxis"
+        [grid]="lineChartOptions().grid"
+        [dataLabels]="lineChartOptions().dataLabels"
+        [tooltip]="lineChartOptions().tooltip"
+      />
+    </mat-card-content>
+  </mat-card>
+</div>

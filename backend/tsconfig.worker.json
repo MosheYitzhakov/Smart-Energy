@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "resolvePackageJsonExports": false,
+    "outDir": "./dist",
+    "rootDir": "."
+  },
+  "include": [
+    "simulation-worker/**/*.ts",
+    "src/domain/**/*.ts",
+    "src/infrastructure/bullmq/bullmq.constants.ts"
+  ],
+  "exclude": ["node_modules", "dist"]
+}

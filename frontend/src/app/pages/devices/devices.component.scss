@@ -1,0 +1,95 @@
+.spacer {
+  flex: 1;
+}
+
+.content {
+  padding: 16px;
+}
+
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  padding: 48px;
+}
+
+.error-message {
+  color: var(--alert-critical-text);
+  text-align: center;
+  padding: 24px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 64px 16px;
+  color: var(--empty-color);
+
+  .empty-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 16px;
+    opacity: 0.35;
+  }
+
+  p {
+    margin-bottom: 24px;
+    color: var(--text-secondary);
+  }
+
+  button {
+    background: linear-gradient(90deg, #00d2ff, #00e676) !important;
+    color: #0a0f1e !important;
+    font-weight: 600;
+  }
+}
+
+.devices-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.device-card {
+  mat-chip {
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: var(--chip-text) !important;
+    color: #fff !important;
+    border-radius: 6px !important;
+  }
+
+  button[mat-icon-button][color='warn'] {
+    color: var(--delete-btn-color) !important;
+  }
+}
+
+.add-form-card {
+  max-width: 480px;
+  margin-top: 16px;
+}
+
+.full-width {
+  width: 100%;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 8px;
+
+  button[mat-raised-button][color='primary'] {
+    background: linear-gradient(90deg, #00d2ff, #00e676) !important;
+    color: #0a0f1e !important;
+    font-weight: 600;
+  }
+
+  button[mat-button] {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+}

@@ -1,0 +1,96 @@
+<mat-toolbar color="primary">
+  <button mat-icon-button routerLink="/dashboard" [title]="i18n.t().nav.back">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <span class="toolbar-title">{{ i18n.t().devices.title }}</span>
+  <span class="spacer"></span>
+  <button mat-button class="theme-toggle-btn" (click)="theme.toggle()">
+    <mat-icon>{{ theme.theme() === 'dark' ? 'light_mode' : 'dark_mode' }}</mat-icon>
+  </button>
+  <button mat-button class="lang-toggle-btn" (click)="i18n.toggle()">
+    {{ i18n.lang() === 'he' ? 'EN' : 'עב' }}
+  </button>
+  <button mat-icon-button (click)="openAddForm()" [title]="i18n.t().devices.addBtn" data-testid="add-device-btn">
+    <mat-icon>add</mat-icon>
+  </button>
+</mat-toolbar>
+
+<div class="content">
+  @if (loading()) {
+    <div class="spinner-container">
+      <mat-spinner />
+    </div>
+  } @else if (error()) {
+    <p class="error-message">{{ error() }}</p>
+  } @else if (devices().length === 0 && !showAddForm()) {
+    <div class="empty-state" data-testid="empty-state">
+      <mat-icon class="empty-icon">electrical_services</mat-icon>
+      <p>{{ i18n.t().devices.emptyTitle }}</p>
+      <button mat-raised-button color="primary" (click)="openAddForm()" data-testid="add-first-device-btn">
+        {{ i18n.t().devices.emptyAction }}
+      </button>
+    </div>
+  } @else {
+    <div class="devices-grid">
+      @for (device of devices(); track device.id) {
+        <mat-card class="device-card" [attr.data-testid]="'device-' + device.id">
+          <mat-card-header>
+            <mat-icon mat-card-avatar>{{ device.type === 'solar' ? 'solar_power' : 'power' }}</mat-icon>
+            <mat-card-title>{{ device.name }}</mat-card-title>
+            <mat-card-subtitle>{{ device.powerWatts }}W</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-chip [class]="device.type">{{ device.type }}</mat-chip>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-icon-button color="warn" (click)="deleteDevice(device.id)" [title]="i18n.t().devices.deleteError">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+  }
+
+  @if (showAddForm()) {
+    <mat-card class="add-form-card" data-testid="add-device-dialog">
+      <mat-card-header>
+        <mat-card-title>{{ i18n.t().devices.formTitle }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <form [formGroup]="addForm" (ngSubmit)="createDevice()">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ i18n.t().devices.name }}</mat-label>
+            <input matInput formControlName="name" data-testid="device-name-input" />
+            @if (addForm.get('name')?.hasError('required')) {
+              <mat-error>{{ i18n.t().devices.nameRequired }}</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ i18n.t().devices.type }}</mat-label>
+            <mat-select formControlName="type" data-testid="device-type-select">
+              @for (t of deviceTypes; track t) {
+                <mat-option [value]="t">{{ t }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>{{ i18n.t().devices.power }}</mat-label>
+            <input matInput type="number" formControlName="powerWatts" data-testid="device-watts-input" />
+          </mat-form-field>
+
+          <div class="form-actions">
+            <button mat-button type="button" (click)="cancelAdd()" data-testid="cancel-add-btn">
+              {{ i18n.t().devices.cancel }}
+            </button>
+            <button mat-raised-button color="primary" type="submit" [disabled]="addForm.invalid" data-testid="save-device-btn">
+              {{ i18n.t().devices.save }}
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  }
+</div>
