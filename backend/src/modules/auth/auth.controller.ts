@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Req, Res, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Req,
+  Res,
+  HttpCode,
+  HttpStatus,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
@@ -12,13 +20,16 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Login and receive access token' })
-  @ApiResponse({ status: 200, description: 'Returns access token; sets refresh token cookie' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns access token; sets refresh token cookie',
+  })
   async login(
     @Body() dto: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<{ accessToken: string }> {
     const user = await this.authService.validateUser(dto.email, dto.password);
-    const { accessToken, refreshToken } = await this.authService.login(user);
+    const { accessToken, refreshToken } = this.authService.login(user);
 
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
@@ -38,7 +49,8 @@ export class AuthController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ): Promise<{ accessToken: string }> {
-    const token: string = (req.cookies as Record<string, string>)['refreshToken'] ?? '';
+    const token: string =
+      (req.cookies as Record<string, string>)['refreshToken'] ?? '';
     const { accessToken, refreshToken } = await this.authService.refresh(token);
 
     res.cookie('refreshToken', refreshToken, {
