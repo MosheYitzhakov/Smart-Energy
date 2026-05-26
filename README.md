@@ -43,7 +43,7 @@ Simulation Worker (TypeScript, every 5s)
 ```bash
 git clone <repo>
 cd smart-energy
-cp backend/.env.dev backend/.env.dev   # already present; edit secrets
+cp .env.example backend/.env.dev       # then edit the secrets inside
 ```
 
 Minimum required values in `backend/.env.dev`:
@@ -154,10 +154,9 @@ Key endpoints:
 | GET | `/automations` | List automation rules |
 | POST | `/automations` | Create automation rule |
 | DELETE | `/automations/:id` | Delete rule |
-| POST | `/ai/explain` | AI explanation of analytics |
+| GET | `/ai/insight` | Pre-built AI insight for dashboard |
 | POST | `/ai/chat` | Conversational AI about energy data |
-| GET | `/ai/insight` | Pre-built insight for dashboard |
-| GET | `/health` | System health (DB, Redis, BullMQ, Ollama) |
+| GET | `/health` | System health (DB, Redis, uptime) |
 
 ---
 
@@ -175,7 +174,7 @@ smart-energy/
 │       │   ├── database/             # TypeORM config, migrations
 │       │   ├── redis/                # ioredis module
 │       │   ├── bullmq/               # single queue module
-│       │   ├── ollama/               # Ollama HTTP client
+│       │   ├── config/               # Joi env validation
 │       │   └── logger/               # Winston structured logger
 │       └── modules/
 │           ├── auth/                 # JWT auth, roles, guards
@@ -187,20 +186,20 @@ smart-energy/
 │           ├── automations/          # rule engine
 │           ├── aggregation/          # hourly/daily cron jobs
 │           ├── ai/                   # AI text layer (Ollama/Mock)
-│           ├── health/               # health check endpoint
-│           └── notifications/        # alert service
+│           └── health/               # health check endpoint
 ├── frontend/
 │   └── src/app/
 │       ├── core/
-│       │   ├── auth/                 # auth service, guard, interceptor
-│       │   ├── i18n/                 # Hebrew/English translations
-│       │   └── websocket/            # Socket.IO service with reconnect
+│       │   ├── services/             # auth, websocket, theme services
+│       │   ├── guards/               # auth guard
+│       │   ├── interceptors/         # JWT interceptor
+│       │   └── i18n/                 # Hebrew/English translations
 │       ├── store/
 │       │   └── energy.store.ts       # Angular Signals state
 │       └── pages/
+│           ├── login/                # login page
 │           ├── dashboard/            # live gauges + charts
 │           ├── devices/              # device control panel
-│           ├── analytics/            # history + patterns
 │           ├── automations/          # rule builder
 │           ├── ai/                   # chat + insight card
 │           └── settings/             # tariff configuration
