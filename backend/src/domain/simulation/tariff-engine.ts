@@ -15,10 +15,8 @@ export class TariffEngine {
   private static readonly PEAK_END = 22;
 
   getRateAt(timestamp: number): TariffRate {
-    const date = new Date(timestamp);
-    const hour = date.getHours();
-    const day = date.getDay(); // 0=Sun … 6=Sat
-    const isWeekend = day === 5 || day === 6;
+    const { hour, day } = TariffEngine.getJerusalemHourAndDay(timestamp);
+    const isWeekend = day === 5 || day === 6; // Fri=5, Sat=6
     const isPeak =
       !isWeekend &&
       hour >= TariffEngine.PEAK_START &&
@@ -27,6 +25,20 @@ export class TariffEngine {
     return isPeak
       ? { rateILS: TariffEngine.PEAK_RATE_ILS, period: 'peak' }
       : { rateILS: TariffEngine.OFF_PEAK_RATE_ILS, period: 'off-peak' };
+  }
+
+  private static getJerusalemHourAndDay(timestamp: number): { hour: number; day: number } {
+    const parts = new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Asia/Jerusalem',
+      hour: 'numeric',
+      weekday: 'short',
+      hour12: false,
+    }).formatToParts(new Date(timestamp));
+
+    const hour = parseInt(parts.find((p) => p.type === 'hour')?.value ?? '0', 10) % 24;
+    const weekday = parts.find((p) => p.type === 'weekday')?.value ?? 'Mon';
+    const dayMap: Record<string, number> = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+    return { hour, day: dayMap[weekday] ?? 0 };
   }
 
   /** Returns cost in ILS for watts consumed over intervalMs milliseconds. */
